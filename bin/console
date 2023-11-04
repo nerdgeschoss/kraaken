@@ -8,4 +8,9 @@ require "kraaken"
 # with your gem easier. You can also use a different console, if you like.
 
 require "irb"
+
+def k
+  @k ||= Kraaken::Config.new
+end
+
 IRB.start(__FILE__)

@@ -2,13 +2,14 @@
 
 module Kraaken
   class Error < StandardError; end
-  # Your code goes here...
 end
 
 require "active_support"
+require "active_support/core_ext"
 require "zeitwerk"
+require "thor"
+require "open3"
 
 loader = Zeitwerk::Loader.for_gem
-loader.ignore("#{__dir__}/kamal/sshkit_with_ext.rb")
 loader.setup
 loader.eager_load
