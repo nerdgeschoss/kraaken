@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Kraaken::App
   attr_reader :name, :server, :destination
 
