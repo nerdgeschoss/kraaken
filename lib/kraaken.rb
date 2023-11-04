@@ -9,6 +9,7 @@ require "active_support/core_ext"
 require "zeitwerk"
 require "thor"
 require "open3"
+require "tempfile"
 
 loader = Zeitwerk::Loader.for_gem
 loader.setup

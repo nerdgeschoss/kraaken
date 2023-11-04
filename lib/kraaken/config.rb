@@ -23,6 +23,7 @@ class Kraaken::Config
 
   def load_template(name, **locals)
     locals[:config] = self
-    ERB.new(File.read(File.expand_path("../config/#{name}", __dir__))).result_with_hash(locals)
+    name = File.expand_path("../config/#{name}", __dir__) unless name.start_with?("/")
+    ERB.new(File.read(name)).result_with_hash(locals)
   end
 end

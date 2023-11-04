@@ -34,9 +34,11 @@ class Kraaken::Ssh
   end
 
   def connect(name)
+    result = nil
     Net::SSH.start(name) do |ssh|
-      yield Kraaken::Ssh::Connection.new(ssh, logger: config.logger) if block_given?
+      result = yield Kraaken::Ssh::Connection.new(ssh, logger: config.logger) if block_given?
     end
+    result
   end
 
   private

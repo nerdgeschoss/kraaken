@@ -10,6 +10,8 @@ begin
   Kraaken::Cli::Main.start(ARGV)
 rescue => e
   puts "  \e[31mERROR (#{e.class}): #{e.message}\e[0m"
-  puts e.backtrace # if ENV["VERBOSE"]
+  puts e.backtrace
   exit 1
+rescue Interrupt
+  exit 0
 end

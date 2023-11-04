@@ -18,9 +18,13 @@ class Kraaken::Ssh::Connection
     output.join("\n")
   end
 
+  def read_file(path)
+    run "cat #{path}", log: false
+  end
+
   def write_file(path, content)
     run log: false, script: <<~BASH
-      cat <<'EOT' >> #{path}
+      cat <<'EOT' > #{path}
       #{content}
       EOT
     BASH
