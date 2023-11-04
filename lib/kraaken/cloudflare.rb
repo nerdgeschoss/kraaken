@@ -50,8 +50,7 @@ class Kraaken::Cloudflare
       content: "#{tunnel.id}.cfargotunnel.com"
     }
     logger.info "Creating DNS record for #{name}.server.nerdgeschoss.de"
-    res = client.post("/client/v4/zones/#{zone_id}/dns_records", server_dns)
-    binding.irb
+    client.post("/client/v4/zones/#{zone_id}/dns_records", server_dns)
     app_dns = {
       type: "CNAME",
       proxied: true,
@@ -83,7 +82,7 @@ class Kraaken::Cloudflare
       f.request :authorization, "Bearer", credential.password
       f.request :json
       f.response :json
-      # f.response :raise_error
+      f.response :raise_error
     end
   end
 
