@@ -6,6 +6,7 @@ PATH
       faraday (~> 2.7)
       hcloud (~> 1.2)
       net-ssh (~> 7.0)
+      ruby-progressbar (~> 1.13)
       thor (~> 1.2)
       zeitwerk (~> 2.5)
 

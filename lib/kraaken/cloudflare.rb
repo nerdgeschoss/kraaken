@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "faraday"
 
 class Kraaken::Cloudflare
@@ -19,7 +21,7 @@ class Kraaken::Cloudflare
 
   def create_tunnel(name)
     tunnel_secret = Base64.strict_encode64 SecureRandom.hex(32)
-    body = {name:, tunnel_secret:}
+    body = {name:, tunnel_secret:, config_src: "cloudflare"}
     config = {
       config: {
         ingress: [
@@ -39,21 +41,26 @@ class Kraaken::Cloudflare
     }
     res = client.post("/client/v4/accounts/#{credential.username}/cfd_tunnel", body).body["result"]
     tunnel = Tunnel.new(res["id"], res["name"], res["status"], self, res["token"])
-    client.post("/client/v4/accounts/#{credential.username}/cfd_tunnel/#{tunnel.id}/configurations", config)
+    logger.info "Creating tunnel #{name} with id #{tunnel.id}"
+    client.put("/client/v4/accounts/#{credential.username}/cfd_tunnel/#{tunnel.id}/configurations", config)
     server_dns = {
       type: "CNAME",
       proxied: true,
       name: "#{name}.server.nerdgeschoss.de",
       content: "#{tunnel.id}.cfargotunnel.com"
     }
-    client.post("/client/v4/accounts/#{credential.username}/dns_records", server_dns)
+    logger.info "Creating DNS record for #{name}.server.nerdgeschoss.de"
+    res = client.post("/client/v4/zones/#{zone_id}/dns_records", server_dns)
+    binding.irb
     app_dns = {
       type: "CNAME",
       proxied: true,
       name: "*.#{name}.nerdgeschoss.de",
       content: "#{tunnel.id}.cfargotunnel.com"
     }
-    client.post("/client/v4/accounts/#{credential.username}/dns_records", app_dns)
+    logger.info "Creating DNS record for #{name}.server.nerdgeschoss.de"
+    client.post("/client/v4/zones/#{zone_id}/dns_records", app_dns)
+    logger.info "Tunnel #{name} created"
     tunnel
   end
 
@@ -69,6 +76,8 @@ class Kraaken::Cloudflare
 
   attr_reader :config
 
+  delegate :logger, to: :config
+
   def client
     @client ||= Faraday.new(url: "https://api.cloudflare.com") do |f|
       f.request :authorization, "Bearer", credential.password
@@ -79,6 +88,10 @@ class Kraaken::Cloudflare
   end
 
   def credential
-    config.credentials.credential("cloudflare")
+    @credential ||= config.credentials.credential("cloudflare")
+  end
+
+  def zone_id
+    config.credentials.password("cloudflare-zone")
   end
 end

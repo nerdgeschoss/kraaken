@@ -11,7 +11,7 @@ class Kraaken::Cli::Server < Kraaken::Cli::Base
   desc "list", "Lists all current servers"
   def list
     config.cloud.servers.each do |server|
-      say "#{server.name} (#{server.status}) #{server.ip} #{server.public_ip}"
+      logger.info "#{server.name} (#{server.status}) #{server.ip} #{server.public_ip}"
     end
   end
 end

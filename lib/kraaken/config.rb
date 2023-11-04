@@ -17,8 +17,12 @@ class Kraaken::Config
     @ingress ||= Kraaken::Cloudflare.new(config: self)
   end
 
+  def logger
+    @logger ||= Kraaken::Logger.new
+  end
+
   def load_template(name, **locals)
     locals[:config] = self
-    ERB.new(File.read(File.join(__dir__, "..", "config", name))).result_with_hash(locals)
+    ERB.new(File.read(File.expand_path("../config/#{name}", __dir__))).result_with_hash(locals)
   end
 end

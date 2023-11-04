@@ -4,25 +4,38 @@ require "hcloud"
 
 class Kraaken::Cloud::Hetzner < Kraaken::Cloud
   def provision(name, groups:)
-    keys = client.ssh_keys
-    user_data = config.load_template("cloud_config.yml", keys:)
-    options = {
-      name:,
-      server_type: "cax41",
-      image: "ubuntu-22.04",
-      labels: {group: groups.join(".")},
-      location: "nbg1",
-      networks: [client.networks.first.id],
-      ssh_keys: keys.map(&:id),
-      user_data:
-    }
-    action, server = cloud.servers.create(options)
-    await_action action
-    server = await_startup server
-    config.ssh.regenerate_config
-    sleep 10
-    await_action server.reboot
-    prepare name
+    logger.with_progress(total: 100) do
+      logger.info "Provisioning server #{name}"
+      keys = client.ssh_keys
+      user_data = config.load_template("cloud-config.yml", keys:)
+      options = {
+        name:,
+        server_type: "cax41",
+        image: "ubuntu-22.04",
+        labels: {group: groups.join(".")},
+        location: "nbg1",
+        networks: [client.networks.first.id],
+        ssh_keys: keys.map(&:id),
+        user_data:
+      }
+      logger.increment_progress by: 5
+      logger.info "Creating server"
+      action, server = client.servers.create(**options)
+      await_action action
+      logger.increment_progress by: 10
+      server = await_startup server
+      logger.info "Server started #{server.public_net.dig("ipv4", "ip")}"
+      logger.increment_progress by: 10
+      logger.info "Regenrating ssh config"
+      config.ssh.regenerate_config
+      logger.increment_progress by: 5
+      sleep 10
+      logger.increment_progress by: 10
+      logger.info "Rebooting server after applying cloud-config"
+      await_action server.reboot
+      logger.increment_progress by: 10
+      prepare name
+    end
   end
 
   def servers
@@ -45,7 +58,7 @@ class Kraaken::Cloud::Hetzner < Kraaken::Cloud
   def await_startup(server)
     while server.status == "initializing" || server.status == "starting" || server.status == "off"
       sleep 3
-      server = cloud.servers.find(server.id)
+      server = client.servers.find(server.id)
     end
     server
   end

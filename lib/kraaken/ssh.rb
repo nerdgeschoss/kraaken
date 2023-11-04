@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "net/ssh"
 
 class Kraaken::Ssh
@@ -33,7 +35,7 @@ class Kraaken::Ssh
 
   def connect(name)
     Net::SSH.start(name) do |ssh|
-      yield Kraaken::Ssh::Connection.new(ssh) if block_given?
+      yield Kraaken::Ssh::Connection.new(ssh, logger: config.logger) if block_given?
     end
   end
 

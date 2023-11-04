@@ -10,4 +10,8 @@ class Kraaken::Cli::Base < Thor
   def config
     @config ||= Kraaken::Config.new
   end
+
+  def logger
+    config.logger
+  end
 end

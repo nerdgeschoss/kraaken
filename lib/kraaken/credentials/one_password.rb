@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Kraaken::Credentials::OnePassword < Kraaken::Credentials
   def credential(name)
     username = retrieve(name, "username")
