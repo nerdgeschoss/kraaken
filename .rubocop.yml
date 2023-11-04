@@ -1,0 +1,9 @@
+AllCops:
+  TargetRubyVersion: 3.2
+  SuggestExtensions: false
+  Exclude:
+    - "scratchpad.rb"
+    - "vendor/**/*"
+
+inherit_gem:
+  shimmer: config/rubocop_base.yml
