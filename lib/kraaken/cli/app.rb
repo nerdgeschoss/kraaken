@@ -50,6 +50,11 @@ class Kraaken::Cli::App < Kraaken::Cli::Base
     run "ssh #{app.server} -t 'cd ~/#{app.full_name} && docker-compose exec web #{command.join(" ")}'"
   end
 
+  desc "console", "opens a rails console"
+  def console
+    exec "bundle exec rails console"
+  end
+
   private
 
   def app
