@@ -45,6 +45,11 @@ class Kraaken::Cli::App < Kraaken::Cli::Base
   rescue IOError # prevent error when terminating the cli
   end
 
+  desc "exec", "exec a command within the web container"
+  def exec(*command)
+    run "ssh #{app.server} -t 'cd ~/#{app.full_name} && docker-compose exec web #{command.join(" ")}'"
+  end
+
   private
 
   def app
