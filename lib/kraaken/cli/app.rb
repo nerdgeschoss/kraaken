@@ -27,7 +27,7 @@ class Kraaken::Cli::App < Kraaken::Cli::Base
   desc "deploy", "deploys the app"
   option :file, aliases: "-f", desc: "docker-compose file to deploy"
   def deploy
-    default_path = File.expand_path("config/deploy/docker-compose.yml", destination_root)
+    default_path = File.expand_path("config/docker-compose.yml", destination_root)
     file = File.new(options[:file]) if options[:file].present? && File.exist?(options[:file])
     file = File.new(default_path) if !file && File.exist?(default_path)
     logger.error "No docker-compose file found" and return unless file
