@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email = ["jens@nerdgeschoss.de"]
 
   spec.summary = "Deploy stuff with docker. The easy way."
-  spec.description = "Kraaken helps you deploy your applications with docker, traefik and cloudflare tunnels."
+  spec.description = "Kraaken helps you deploy your applications with docker and traefik."
   spec.homepage = "https://github.com/nerdgeschoss/kraaken"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.1.0"

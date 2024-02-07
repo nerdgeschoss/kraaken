@@ -5,7 +5,8 @@ class Kraaken::Cli::Server < Kraaken::Cli::Base
   method_option :group, aliases: "-g", desc: "assign the server to an access group, default: admin"
   def provision(name)
     groups = [options[:group] || "admin", "admin"].uniq
-    config.cloud.provision(name, groups:)
+    server = config.cloud.provision(name, groups:)
+    config.cloudflare.create_dns(name: server.name, ip: server.public_ip)
   end
 
   desc "list", "Lists all current servers"

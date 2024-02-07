@@ -35,6 +35,7 @@ class Kraaken::Cloud::Hetzner < Kraaken::Cloud
       await_action server.reboot
       logger.increment_progress by: 10
       prepare name
+      servers.find { _1.name == name }
     end
   end
 
